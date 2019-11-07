@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import { VictoryChart, VictoryBar } from 'victory';
 
 class App extends Component {
   state = {
@@ -89,9 +90,39 @@ class App extends Component {
     }
   }
 
+  calcAvgRatingDifficulty = () => {
+    const exercises = [...this.state.exercises];
+    const ratingsDifficulty = [...this.state.ratingsDifficulty];
+
+    return exercises.map(exercise => {
+      const exerciseRatingDifficulty = ratingsDifficulty.filter(rating => rating.exerciseID === exercise.id);
+      const totalRatingDifficulty = exerciseRatingDifficulty.reduce((total, current) => {
+        return total + current.ratingDifficulty 
+      }, 0);
+      const avgRatingDifficulty = totalRatingDifficulty / exerciseRatingDifficulty.length;
+
+      return {
+        exercise: exercise.name,
+        rating: avgRatingDifficulty
+      }
+    });
+  };
+
   render() {
+    const avgRatingsDifficulty = this.calcAvgRatingDifficulty();
+    const avgRatingsDifficultyForGraph = avgRatingsDifficulty.map(rating => {
+      return {
+        x: rating.exercise,
+        y: rating.rating
+      };
+    });
+
     return (
-      <div className="App"></div>
+      <div className="App">
+        <VictoryChart>
+          <VictoryBar data={avgRatingsDifficultyForGraph} />
+        </VictoryChart> 
+      </div>
     );
   }
 }
