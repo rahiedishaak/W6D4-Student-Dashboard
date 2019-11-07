@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { VictoryChart, VictoryBar } from 'victory';
+import { VictoryChart, VictoryBar, VictoryVoronoiContainer, VictoryTooltip } from 'victory';
 
 class App extends Component {
   state = {
@@ -54,12 +54,17 @@ class App extends Component {
         const exercise = exercises.find(exercise => exercise.name === element.exercise);
         const exerciseID = exercise.id;
 
-        return {
+        const newRating = {
           id: index + 1,
           ratingDifficulty: element.ratingDifficulty,
           studentID: studentID,
           exerciseID: exerciseID
         };
+        
+        student.ratingsDifficulty.push(newRating.id);
+        exercise.ratingsDifficulty.push(newRating.id);
+
+        return newRating;
       });
 
       // create ratingsEnjoyment array for state
@@ -70,12 +75,17 @@ class App extends Component {
         const exercise = exercises.find(exercise => exercise.name === element.exercise);
         const exerciseID = exercise.id;
 
-        return {
+        const newRating = {
           id: index + 1,
           ratingDifficulty: element.ratingEnjoyment,
           studentID: studentID,
           exerciseID: exerciseID
         };
+
+        student.ratingsEnjoyment.push(newRating.id);
+        exercise.ratingsEnjoyment.push(newRating.id);
+
+        return newRating;
       });
 
       // set state
@@ -84,7 +94,7 @@ class App extends Component {
         exercises: exercises,
         ratingsDifficulty: ratingsDifficulty,
         ratingsEnjoyment: ratingsEnjoyment
-      });      
+      });
     } catch (error) {
       console.log(error);
     }
@@ -102,7 +112,8 @@ class App extends Component {
       const avgRatingDifficulty = totalRatingDifficulty / exerciseRatingDifficulty.length;
 
       return {
-        exercise: exercise.name,
+        exerciseID: exercise.id,
+        exerciseName: exercise.name,
         rating: avgRatingDifficulty
       }
     });
@@ -113,14 +124,18 @@ class App extends Component {
     const avgRatingsDifficultyForGraph = avgRatingsDifficulty.map(rating => {
       return {
         x: rating.exercise,
-        y: rating.rating
+        y: rating.rating,
+        label: `${rating.exerciseName} | ${rating.rating}`
       };
     });
 
     return (
       <div className="App">
         <VictoryChart>
-          <VictoryBar data={avgRatingsDifficultyForGraph} />
+          <VictoryBar 
+            data={avgRatingsDifficultyForGraph} 
+            labelComponent={<VictoryTooltip />}
+          />
         </VictoryChart> 
       </div>
     );
