@@ -94,6 +94,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <h1>Student Dashboard</h1>
         <Switch>
           <Route 
             path="/" exact

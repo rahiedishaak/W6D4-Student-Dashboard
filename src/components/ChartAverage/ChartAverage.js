@@ -3,19 +3,39 @@ import { VictoryChart, VictoryBar, VictoryTooltip, VictoryGroup, VictoryLabel } 
 
 class ChartAverage extends Component {
   state = {
-    filter: 'all'
+    filter: 'all',
+    filterStudents: ['Evelyn', 'Aranka', 'Floris', 'Hector', 'Martina', 'Maurits', 'Rahima', 'Sandra', 'Wietske', 'Storm']
   }
 
   filterChangeHandler = event => {
     this.setState({ filter: event.target.value });
   };
 
+  filterStudentsChangeHandler = event => {
+    const newFilterStudents = [...this.state.filterStudents];
+    if (!event.target.checked) {
+      const indexClickedStudent = newFilterStudents.indexOf(event.target.value);
+      newFilterStudents.splice(indexClickedStudent, 1);
+    } else {
+      newFilterStudents.push(event.target.value);
+    }
+    this.setState({ filterStudents: newFilterStudents });
+  };
+
   calcAvgRatingDifficulty = () => {
     const exercises = [...this.props.state.exercises];
     const ratingsDifficulty = [...this.props.state.ratingsDifficulty];
+    const students = [...this.props.state.students];
+    const filteredStudents = [...this.state.filterStudents];
+
+    const filteredRatingsDifficulty = ratingsDifficulty.filter(rating => {
+      const student = students.find(student => student.id === rating.studentID);
+      const studentName = student.name;
+      return filteredStudents.includes(studentName);
+    })
 
     return exercises.map(exercise => {
-      const exerciseRatingDifficulty = ratingsDifficulty.filter(rating => rating.exerciseID === exercise.id);
+      const exerciseRatingDifficulty = filteredRatingsDifficulty.filter(rating => rating.exerciseID === exercise.id);
       const totalRatingDifficulty = exerciseRatingDifficulty.reduce((total, current) => {
         return total + current.ratingDifficulty 
       }, 0);
@@ -32,9 +52,17 @@ class ChartAverage extends Component {
   calcAvgRatingEnjoyment = () => {
     const exercises = [...this.props.state.exercises];
     const ratingsEnjoyment = [...this.props.state.ratingsEnjoyment];
+    const students = [...this.props.state.students];
+    const filteredStudents = [...this.state.filterStudents];
+
+    const filteredRatingsEnjoyment = ratingsEnjoyment.filter(rating => {
+      const student = students.find(student => student.id === rating.studentID);
+      const studentName = student.name;
+      return filteredStudents.includes(studentName);
+    })
 
     return exercises.map(exercise => {
-      const exerciseRatingEnjoyment = ratingsEnjoyment.filter(rating => rating.exerciseID === exercise.id);
+      const exerciseRatingEnjoyment = filteredRatingsEnjoyment.filter(rating => rating.exerciseID === exercise.id);
       const totalRatingEnjoyment = exerciseRatingEnjoyment.reduce((total, current) => {
         return total + current.ratingEjoyment 
       }, 0);
@@ -116,7 +144,7 @@ class ChartAverage extends Component {
 
     return (
       <>
-        <form onChange={this.filterChangeHandler} style={{ marginTop: '30px' }}>
+        <form onChange={this.filterChangeHandler} style={{ marginTop: '20px' }}>
           <label style={{ marginRight: '30px' }}>
             <input type="radio" name="filter" value="difficulty" /> Moeilijkheid
           </label>
@@ -128,13 +156,13 @@ class ChartAverage extends Component {
           </label>
         </form>
 
-        <form style={{ marginTop: '20px' }}>
+        <form onChange={this.filterStudentsChangeHandler} style={{ marginTop: '20px' }}>
           {this.props.state.students.map((student, index) => (
             <label key={index} style={index !== 0 ? {marginLeft: '20px'} : null}>
               <input 
-                type="checkbox" 
-                name="filterStudent" 
-                value={student.name.toLowerCase()}
+                type="checkbox"
+                name="filterStudent"
+                value={student.name}
                 defaultChecked /> {student.name}
             </label>
           ))}                    
