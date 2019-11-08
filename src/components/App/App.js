@@ -91,55 +91,14 @@ class App extends Component {
     }
   }
 
-  // Calculate average ratings
-  calcAvgRatingDifficulty = () => {
-    const exercises = [...this.state.exercises];
-    const ratingsDifficulty = [...this.state.ratingsDifficulty];
-
-    return exercises.map(exercise => {
-      const exerciseRatingDifficulty = ratingsDifficulty.filter(rating => rating.exerciseID === exercise.id);
-      const totalRatingDifficulty = exerciseRatingDifficulty.reduce((total, current) => {
-        return total + current.ratingDifficulty 
-      }, 0);
-      const avgRatingDifficulty = totalRatingDifficulty / exerciseRatingDifficulty.length;
-
-      return {
-        exerciseID: exercise.id,
-        exerciseName: exercise.name,
-        rating: avgRatingDifficulty
-      };
-    });
-  };
-
-  calcAvgRatingEnjoyment = () => {
-    const exercises = [...this.state.exercises];
-    const ratingsEnjoyment = [...this.state.ratingsEnjoyment];
-
-    return exercises.map(exercise => {
-      const exerciseRatingEnjoyment = ratingsEnjoyment.filter(rating => rating.exerciseID === exercise.id);
-      const totalRatingEnjoyment = exerciseRatingEnjoyment.reduce((total, current) => {
-        return total + current.ratingEjoyment 
-      }, 0);
-      const avgRatingEnjoyment = totalRatingEnjoyment / exerciseRatingEnjoyment.length;
-
-      return {
-        exerciseID: exercise.id,
-        exerciseName: exercise.name,
-        rating: avgRatingEnjoyment
-      };
-    });
-  };
-
   render() {
     return (
       <div className="App">
         <Switch>
           <Route 
             path="/" exact
-            render={props => <ChartAverage 
-              {...props}
-              avgDifficulty={this.calcAvgRatingDifficulty}
-              avgEnjoyment={this.calcAvgRatingEnjoyment} />} />
+            render={props => <ChartAverage {...props} state={{...this.state}} />} 
+          />
         </Switch>
       </div>
     );
