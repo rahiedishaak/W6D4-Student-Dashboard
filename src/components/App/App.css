@@ -1,3 +1,15 @@
 .App {
   text-align: center;
 }
+
+.App a:link,
+.App a:visited {
+  color: #333;
+  text-decoration: none;
+}
+
+.App a:hover,
+.App a:active,
+.App a.active {
+  text-decoration: underline;
+}

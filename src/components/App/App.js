@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, NavLink } from 'react-router-dom';
 import ChartAverage from '../ChartAverage/ChartAverage';
+import ChartStudent from '../ChartStudent/ChartStudent';
 
 class App extends Component {
   state = {
@@ -92,15 +93,55 @@ class App extends Component {
   }
 
   render() {
+    const styleUl = {
+      listStyleType: 'none',
+      display: 'flex',
+      justifyContent: 'center',
+      marginBottom: '20px'
+    };
+
+    const styleLi = {
+      border: '1px solid #ccc',
+      boxShadow: '0 2px 2px #eee',
+      padding: '10px',
+      marginLeft: '10px'
+    };
+
+    const styleLiFirst = {
+      border: '1px solid #ccc',
+      boxShadow: '0 2px 2px #eee',
+      padding: '10px',
+      marginLeft: '0'
+    };
+
     return (
       <div className="App">
-        <h1>Student Dashboard</h1>
+        <h1 style={{ color: '#4a90e2' }}>Winc Academy Student Dashboard</h1>
         <Switch>
           <Route 
             path="/" exact
             render={props => <ChartAverage {...props} state={{...this.state}} />} 
           />
+          {this.state.students.map(student => (
+            <Route 
+              path={"/" + student.name.toLowerCase()} exact key={student.id}
+              render={props => <ChartStudent {...props} name={student.name} state={{...this.state}} />}
+            />
+          ))}
         </Switch>
+        <nav>
+          <p>Overzicht per student:</p>
+          <ul style={styleUl}>
+            {this.state.students.map((student, index) => (
+              <li key={student.id} style={index !== 0 ? styleLi : styleLiFirst}>
+                <NavLink to={"/" + student.name.toLowerCase()}>{student.name}</NavLink>
+              </li>
+            ))}
+            <li style={styleLi}>
+              <NavLink to={"/"} exact>Voorpagina</NavLink>
+            </li>
+          </ul>
+        </nav>
       </div>
     );
   }
