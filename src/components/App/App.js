@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import { Switch, Route } from 'react-router-dom';
 import ChartAverage from '../ChartAverage/ChartAverage';
 
 class App extends Component {
@@ -132,10 +133,14 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ChartAverage
-          avgDifficulty={this.calcAvgRatingDifficulty}
-          avgEnjoyment={this.calcAvgRatingEnjoyment}
-        />        
+        <Switch>
+          <Route 
+            path="/" exact
+            render={props => <ChartAverage 
+              {...props}
+              avgDifficulty={this.calcAvgRatingDifficulty}
+              avgEnjoyment={this.calcAvgRatingEnjoyment} />} />
+        </Switch>
       </div>
     );
   }

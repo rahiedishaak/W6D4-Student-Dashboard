@@ -46,7 +46,7 @@ const chartAverage = props => {
     <VictoryChart theme={wincTheme} height={350} width={800}>
       <VictoryLabel 
         text="Gemiddelde beoordeling van alle opdrachten" 
-        x={400} y={20} 
+        x={400} y={25} 
         textAnchor="middle"
         style={{ fill: '#4a90e2', fontSize: 20 }} />
       <VictoryGroup offset={3}>
