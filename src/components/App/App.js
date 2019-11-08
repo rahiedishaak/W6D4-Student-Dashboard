@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { VictoryChart, VictoryBar, VictoryTooltip, VictoryGroup, VictoryLabel } from 'victory';
+import ChartAverage from '../ChartAverage/ChartAverage';
 
 class App extends Component {
   state = {
@@ -23,27 +23,17 @@ class App extends Component {
       }, []);
 
       const students = studentNames.map((name, index) => {
-        return {
-          id: index + 1,
-          name: name,
-          ratingsDifficulty: [],
-          ratingsEnjoyment: []
-        };
+        return { id: index + 1, name: name, ratingsDifficulty: [], ratingsEnjoyment: [] };
       });
 
       // create exercises array for state
-      const exerciseNames = data.reduce((names, current) => {
-        if (!names.includes(current.exercise)) names.push(current.exercise);
-        return names;
+      const exerciseNames = data.reduce((exercises, current) => {
+        if (!exercises.includes(current.exercise)) exercises.push(current.exercise);
+        return exercises;
       }, []);
 
       const exercises = exerciseNames.map((name, index) => {
-        return {
-          id: index + 1,
-          name: name,
-          ratingsDifficulty: [],
-          ratingsEnjoyment: []
-        };
+        return { id: index + 1, name: name, ratingsDifficulty: [], ratingsEnjoyment: [] };
       });
       
       // create ratingsDifficulty array for state
@@ -100,6 +90,7 @@ class App extends Component {
     }
   }
 
+  // Calculate average ratings
   calcAvgRatingDifficulty = () => {
     const exercises = [...this.state.exercises];
     const ratingsDifficulty = [...this.state.ratingsDifficulty];
@@ -115,7 +106,7 @@ class App extends Component {
         exerciseID: exercise.id,
         exerciseName: exercise.name,
         rating: avgRatingDifficulty
-      }
+      };
     });
   };
 
@@ -139,78 +130,12 @@ class App extends Component {
   };
 
   render() {
-    const avgRatingsDifficulty = this.calcAvgRatingDifficulty();
-    const avgRatingsDifficultyForGraph = avgRatingsDifficulty.map(rating => {
-      return {
-        x: rating.exerciseID,
-        y: rating.rating,
-        label: `${rating.exerciseName}
-        Moeilijkheid: ${rating.rating}`
-      };
-    });
-
-    const avgRatingsEnjoyment = this.calcAvgRatingEnjoyment();
-    const avgRatingsEnjoymentForGraph = avgRatingsEnjoyment.map(rating => {
-      return {
-        x: rating.exerciseID,
-        y: rating.rating,
-        label: `${rating.exerciseName}
-        Vermaak: ${rating.rating}`
-      };
-    });
-
-    const wincTheme = {
-      axis: {
-        style: {
-          axis: { stroke: "#4a90e2", strokeWidth: 2 },
-          grid: { stroke: "none" },
-          ticks: { size: 5, stroke: "#4a90e2", strokeWidth: 3 },
-          tickLabels: { padding: 3, fontSize: 10, fill: "#4a90e2" }
-        }
-      },
-      bar: {
-        style: {
-          data: { strokeWidth: 1 },
-          labels: { fontSize: 8, fill: "#455A64" }
-        }
-      },
-      group: {
-        colorScale: ["#4a90e2", "#000099"]
-      },
-    };
-
     return (
       <div className="App">
-        <VictoryChart theme={wincTheme} height={350} width={800}>
-          <VictoryLabel 
-            text="Gemiddelde beoordeling van alle opdrachten" 
-            x={400} y={30} 
-            textAnchor="middle"
-            style={{ fill: '#4a90e2', fontSize: 18 }}  
-          />
-          <VictoryGroup offset={3}>
-            <VictoryBar 
-              data={avgRatingsDifficultyForGraph} 
-              labelComponent={
-                <VictoryTooltip 
-                  cornerRadius={5}
-                  pointerLength={10}
-                  flyoutStyle={{ stroke: "none", fill: "#4a90e2" }}
-                />
-              }
-            />
-            <VictoryBar 
-              data={avgRatingsEnjoymentForGraph} 
-              labelComponent={
-                <VictoryTooltip 
-                  cornerRadius={5}
-                  pointerLength={10}
-                  flyoutStyle={{ stroke: "none", fill: "#4a90e2" }}
-                />
-              }
-            />
-          </VictoryGroup>
-        </VictoryChart> 
+        <ChartAverage
+          avgDifficulty={this.calcAvgRatingDifficulty}
+          avgEnjoyment={this.calcAvgRatingEnjoyment}
+        />        
       </div>
     );
   }
